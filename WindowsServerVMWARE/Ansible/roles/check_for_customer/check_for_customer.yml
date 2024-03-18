@@ -1,0 +1,63 @@
+---
+
+# Benutzer nach Kundennummer fragen
+- name: Prüfen und erstellen von Kundenordnern
+  hosts: localhost
+  gather_facts: no
+  vars_prompt:
+  - name: customer_id
+    prompt: "Bitte geben Sie die Kundennummer ein: "
+    private: no 
+  tasks:
+
+  # Überprüfen der Existens des Kundenordners
+  - name: Ueberpruefen der Existens des Kundenordners
+    stat:
+      path: "../../../Kunden/{{customer_id}}"
+    register: folder_info
+    delegate_to: localhost
+
+  # Durchsuchen des Kundenordners nach bestimmten Dateien
+  - name: Durchsuchen des Kundenordners nach bestimmten Dateien
+    find:
+      paths: "../../../Kunden/{{customer_id}}"
+      patterns: 
+        - "main.tf"
+        - "variable.tf"
+        - "run_manual_config.bashrc"
+    register: found_files
+    delegate_to: localhost
+
+  # Informationen anhand der Existens des KundenOrdners
+  - name: Informationen anhand der Existens des Kundenordners
+    debug:
+      msg: |
+        {% if folder_info.stat.exists and folder_files.matched %}
+        Der Kunde {{customer_id}} existiert bereits. \n
+        Bitte prüfen Sie den Kundenordner.
+        {% else %}
+        Der Kunde {{customer_id}} wird erstellt.
+        {% endif %}
+    delegate_to: localhost
+
+  # Erstellen des Kundenordners
+  - name: Erstellen des Kundenordners
+    file:
+      path: "../../../Kunden/{{customer_id}}"
+      state: directory
+    when: not folder_info.stat.exists
+    delegate_to: localhost
+
+  # Kopieren der Standarddateien
+  - name: Kopieren der Standarddateien
+    copy:
+      src: "files/"
+      dest: "../../../Kunden/{{customer_id}}/"
+    when: folder_info.stat.exists and not found_files.matched
+    register: create_folder
+    delegate_to: localhost
+
+  - name: Infos zur Erstellung des Kunden
+    debug:
+      msg: "Bitte passen Sie noch die variables.tf und main.tf nach den Wünschen des Kunden {{customer_id}} an."
+    when: create_folder.changed

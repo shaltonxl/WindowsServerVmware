@@ -1,0 +1,33 @@
+---
+
+# Erstellen der Benutzers "ansible_service"
+- name: Erstellen von Benutzer
+  hosts: "{{server_name}}"
+  tasks:
+  - name: Erstellen von Benutzer "ansible.service"
+    community.windows.win_domain_user:
+      name: ansible.service
+      firstname: ansible
+      surname: service
+      display_name: ansible.service
+      password: "{{service_ansible_password}}"
+      password_never_expires: true
+      state: present
+      groups:
+      - Domänen-Admins
+      - Service_Admin_Gruppe
+      path: "OU=Service,OU=Admin,OU=global,{{base_path}}"
+
+  - name: Erstellen von Benutzer "terraform.service"
+    community.windows.win_domain_user:
+      name: terraform.service
+      firstname: terraform
+      surname: service
+      display_name: ansible.service
+      password: "{{service_terraform_password}}"
+      password_never_expires: true
+      state: present
+      groups:
+      - Domänen-Admins
+      - Service_Admin_Gruppe
+      path: "OU=Service,OU=Admin,OU=global,{{base_path}}"

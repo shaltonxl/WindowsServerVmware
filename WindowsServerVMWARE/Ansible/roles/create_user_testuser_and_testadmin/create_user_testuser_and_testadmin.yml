@@ -1,0 +1,31 @@
+---
+
+# Erstellen der Benutzer "test.admin" und "test.benutzer"
+- name: Erstellen von Benutzer
+  hosts: "{{server_name}}"
+  tasks:
+  - name: Erstellen von Benutzer "test.admin"
+    community.windows.win_domain_user:
+      name: test.admin
+      firstname: test
+      surname: admin
+      display_name: test.admin
+      password: "{{default_password}}"
+      password_expired: true
+      state: present
+      groups:
+      - Domänen-Admins
+      - Domain_Admin_Gruppe
+      path: "OU=Benutzer,OU=Admin,OU=global,{{base_path}}"
+
+  - name: Erstellen von Benutzer "test.benutzer"
+    community.windows.win_domain_user:
+      name: test.benutzer
+      firstname: test
+      surname: benutzer
+      display_name: test.benutzer
+      password: "{{default_password}}"
+      password_expired: true
+      state: present
+      path: "OU=Benutzer,OU=global,{{base_path}}"
+      

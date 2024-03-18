@@ -1,0 +1,38 @@
+---
+
+# Einer Domäne beitreten
+- name: Einer Domäne beitreten
+  hosts: "{{server_name}}"
+  tasks:
+  - name: Installieren des AD
+    ansible.windows.win_feature: 
+        name: AD-Domain-Services
+        include_management_tools: true
+        include_sub_features: true
+        state: present
+
+  - name: Joinen als Domaenencontroller
+    ansible.windows.win_domain_controller: 
+      dns_domain_name: "{{dns_domain_name}}"
+      domain_admin_user: "Administrator@{{dns_domain_name}}"
+      domain_admin_password: "{{administrator_password}}"
+      safe_mode_password: "{{safe_mode_pw_ad_ds}}"
+      state: domain_controller
+      install_dns: true
+    register: domain_controller_join
+
+  - name: DNS einrichten
+    ansible.windows.win_dns_client:
+      adapter_names: "*"
+      dns_servers:
+      - "{{dc_ip_address}}"
+      - 127.0.0.1
+    when: domain_controller_join.reboot_required
+
+  - name: Neustarten des Servers
+    ansible.windows.win_reboot:
+      msg: "Installing AD. Rebooting..."
+      pre_reboot_delay: 15
+      reboot_timeout: 3600
+    when: domain_controller_join.reboot_required
+     

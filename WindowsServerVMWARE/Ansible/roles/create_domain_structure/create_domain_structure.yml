@@ -1,0 +1,40 @@
+---
+
+# Konfiguration der Domäne
+- name: Konfiguration der Domäne
+  hosts: "{{server_name}}"
+  tasks:
+    # Einrichten der OU-Struktur
+  - name: Erstellen der OU-Struktur
+    community.windows.win_domain_ou:
+      name: "{{item.name}}"
+      path: "{{item.path~','~base_path if item.path is not none else base_path}}"
+      state: present
+      protected: true
+    loop:
+      - {name: global, path: }
+      - {name: Admin, path: "OU=global"}
+      - {name: Benutzer, path: "OU=global"}
+      - {name: Berechtigung, path: "OU=global"}
+      - {name: Computer, path: "OU=global"}
+      - {name: Server, path: "OU=global"}
+      - {name: Servicekonto, path: "OU=global"}
+      - {name: Benutzer, path: "OU=Admin,OU=global"}
+      - {name: Gruppen, path: "OU=Admin,OU=global"}
+      - {name: Service, path: "OU=Admin,OU=global"}
+      - {name: Anwendung, path: "OU=Berechtigung,OU=global"}
+      - {name: Laufwerk, path: "OU=Berechtigung,OU=global"}
+      - {name: Rollen, path: "OU=Berechtigung,OU=global"}
+      - {name: Terminalserver, path: "OU=Server,OU=global"}
+
+  # Erstellen von Standardgruppen
+  - name: Erstellen der Gruppe "Service_Admin_Gruppe"
+    community.windows.win_domain_group:
+      name: "{{item.name}}"
+      path: "{{item.path~','~base_path if item.path is not none else base_path}}"
+      scope: "{{item.scope}}"
+      state: present
+      protected: true
+    loop:
+      - {name: Service_Admin_Gruppe, path: "OU=Gruppen,OU=Admin,OU=global", scope: global}
+      - {name: Domain_Admin_Gruppe, path: "OU=Gruppen,OU=Admin,OU=global", scope: global}
