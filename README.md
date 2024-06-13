@@ -4,11 +4,11 @@
 
 ## Project Steps
 
-### 4.1 Installation of Ubuntu
+###  Installation of Ubuntu
 
 To begin the implementation, I need to set up a controller for the test environment. I downloaded the Ubuntu LTS (Long Time Support) ISO and created a new virtual machine (controller.test.lab) in vCenter. This VM is configured with 2 CPUs, 4 GB of RAM, and a 60GB hard drive. During the installation of Ubuntu, I used the standard setup and included a GUI. The user "controller" was created with a password, and the controller is accessible via the IP address "192.168.44.253".
 
-### 4.2 Installation and Configuration of Ansible
+###  Installation and Configuration of Ansible
 
 Before installing Ansible on the controller, I first updated the system. Then I installed Ansible and Python 3.x using the following commands in the terminal:
 
@@ -26,7 +26,7 @@ sudo apt install python3-winrm
 
 This allows Ansible to communicate with Windows Servers and clients via WinRM. For responses from the Windows Servers and clients, WinRM also needs to be set up on them.
 
-### 4.3 Installation and Configuration of Terraform
+### Installation and Configuration of Terraform
 
 Setting up Terraform is a bit more complex than Ansible. First, I installed the HashiCorp GPG key on the controller using the terminal:
 
@@ -64,13 +64,13 @@ sudo apt-get install terraform
 
 This installs the latest version of Terraform on the controller.
 
-### 4.4 Development of Scripts and Playbooks
+###  Development of Scripts and Playbooks
 
 To facilitate script and playbook development, I installed and set up Visual Studio Code on the controller. This allows me to make changes directly to the structure and code. In agreement with our team, we decided on a modular structure for the scripts. This structure offers high flexibility and reproducibility for clients but increases administrative complexity. The structure is as follows:
 
 (Note: For privacy reasons, I will not include passwords. I will use the placeholder ~Password~ for these. The IP address range also does not match the production environment. I have used the IP range 192.168.44.0/24.)
 
-#### 4.4.1 Developing Ansible Playbooks
+####  Developing Ansible Playbooks
 
 I started by developing Ansible playbooks as they will set up the VMs as domain controllers and build the domain structure. These playbooks will later be called by Terraform. The development process is explained using the "create_domain" playbook as an example.
 
@@ -177,7 +177,7 @@ Here is the translation of section 4.4.2 and related parts into English, suitabl
 
 ---
 
-### 4.4.2 Developing Terraform Scripts
+###  Developing Terraform Scripts
 
 Before I could start developing the scripts for Terraform, I had to adjust the provided template.
 
@@ -399,7 +399,7 @@ resource "null_resource" "ansible_create_domain" {
 
 This process is repeated for all Ansible playbooks in Terraform.
 
-### 4.4.4 Creating "main.tf" and "variables.tf" for Test Customers
+###  Creating "main.tf" and "variables.tf" for Test Customers
 
 To use the modular structure for specific customers, I created a "main.tf" and "variables.tf" file in the customer's directory "Customers/168/". In "main.tf", all necessary modules, such as "create_windows_server_2016_vm", are listed. It looks something like this:
 
