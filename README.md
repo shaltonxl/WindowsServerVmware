@@ -377,7 +377,7 @@ This approach is applied to the other scripts as well.
 
 In the final phase, I reviewed whether any compression or additions to the scripts were possible or necessary. For the "create_windows_server_2016_vm" script, no compression or additions were needed. This was also the case for the other scripts.
 
-### 4.4.3 Integrating Terraform and Ansible
+### Integrating Terraform and Ansible
 
 Important: When integrating Terraform and Ansible, the path specifications must be exact. Any deviations can prevent the scripts and playbooks from being executed. Additionally, Ansible requires an inventory in the form of a "hosts.yml" file, which must be created by Terraform (see below). The necessary Ansible password will be passed to Ansible later by the Terraform script.
 
