@@ -173,7 +173,7 @@ I followed these three phases for all necessary Ansible playbooks. I created the
 
 ---
 
-Here is the translation of section 4.4.2 and related parts into English, suitable for a GitHub README file:
+
 
 ---
 
